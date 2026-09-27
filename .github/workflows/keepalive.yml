@@ -1,0 +1,17 @@
+name: keepalive
+on:
+  schedule:
+    - cron: '17 6 */3 * *'
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Appel de la base
+        run: |
+          URL=$(grep -oP "url: '\K[^']+" index.html)
+          KEY=$(grep -oP "key: '\K[^']+" index.html)
+          curl -fsS -X POST "$URL/rest/v1/rpc/rob_get_state" \
+            -H "apikey: $KEY" -H "Content-Type: application/json" -d '{}' > /dev/null
+          echo "OK"
